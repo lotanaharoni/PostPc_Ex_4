@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
         try {
           userInputLong = Long.parseLong(userInputString);
           buttonCalculateRoots.setEnabled(true);
+          if (userInputLong <= 0){
+            buttonCalculateRoots.setEnabled(false);
+          }
         } catch(NumberFormatException e){
           buttonCalculateRoots.setEnabled(false);
         }
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
       Intent intentToOpenService = new Intent(MainActivity.this, CalculateRootsService.class);
       String userInputString = editTextUserInput.getText().toString();
       long userInputLong = 0;
+      userInputLong = Long.parseLong(userInputString);
+
 
       // todo: check that `userInputString` is a number. handle bad input. convert `userInputString` to long
        // todo this should be the converted string from the user
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
       startService(intentToOpenService);
       buttonCalculateRoots.setEnabled(false);
       editTextUserInput.setEnabled(false);
+      progressBar.setVisibility(View.VISIBLE);
 
       // todo: set views states according to the spec (below)
     });
@@ -78,6 +84,14 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onReceive(Context context, Intent incomingIntent) {
         if (incomingIntent == null || !incomingIntent.getAction().equals("found_roots")) return;
+        long root1 = incomingIntent.getLongExtra("root1", 0);
+        long root2 = incomingIntent.getLongExtra("root2", 0);
+        long originalNumber = incomingIntent.getLongExtra("original_number", 0);
+        Intent successIntent = new Intent();
+        successIntent.putExtra("root1", root1);
+        successIntent.putExtra("root2", root2);
+        successIntent.putExtra("originalNumber", originalNumber);
+        startActivity(successIntent);
         // success finding roots!
         /*
          TODO: handle "roots-found" as defined in the spec (below).
@@ -89,6 +103,33 @@ public class MainActivity extends AppCompatActivity {
       }
     };
     registerReceiver(broadcastReceiverForSuccess, new IntentFilter("found_roots"));
+    Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+
+
+    // register a broadcast-receiver to handle action "found_roots"
+    broadcastReceiverForFail = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent incomingIntent) {
+        if (incomingIntent == null || !incomingIntent.getAction().equals("stopped_calculations")) return;
+        long originalNumber = incomingIntent.getLongExtra("original_number", 0);
+        long timeUntilGiveUpSecond = incomingIntent.getLongExtra("time_until_give_up_second", 0);
+        Intent failIntent = new Intent();
+        failIntent.putExtra("originalNumber", originalNumber);
+        failIntent.putExtra("timeUntilGiveUpSecond", timeUntilGiveUpSecond);
+        startActivity(failIntent);
+
+        // success finding roots!
+        /*
+         TODO: handle "roots-found" as defined in the spec (below).
+          also:
+           - the service found roots and passed them to you in the `incomingIntent`. extract them.
+           - when creating an intent to open the new-activity, pass the roots as extras to the new-activity intent
+             (see for example how did we pass an extra when starting the calculation-service)
+         */
+      }
+    };
+    registerReceiver(broadcastReceiverForFail, new IntentFilter("stopped_calculations"));
+    Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
 
     /*
     todo:

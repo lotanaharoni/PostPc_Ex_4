@@ -24,7 +24,7 @@ public class CalculateRootsService extends IntentService {
     }
     Intent resultIntent = new Intent();
     if (numberToCalculateRootsFor == 1){
-      sendSuccessResults(resultIntent, 1, 1, timeStartMs, 1);
+      sendSuccessResults(resultIntent, 1, 1, 1);
       return;
     }
 
@@ -38,7 +38,7 @@ public class CalculateRootsService extends IntentService {
         if (TimeUnit.MILLISECONDS.toSeconds(timePassed) <= 20) {
           root1 = i;
           root2 = numberToCalculateRootsFor / i;
-          sendSuccessResults(resultIntent, root1, root2, timePassed, numberToCalculateRootsFor);
+          sendSuccessResults(resultIntent, root1, root2, numberToCalculateRootsFor);
           return;
         }
       }
@@ -48,7 +48,7 @@ public class CalculateRootsService extends IntentService {
       }
     }
     timePassed = System.currentTimeMillis() - timeStartMs;
-    sendSuccessResults(resultIntent, numberToCalculateRootsFor, 1, timePassed, numberToCalculateRootsFor);
+    sendSuccessResults(resultIntent, numberToCalculateRootsFor, 1, numberToCalculateRootsFor);
     /*
     TODO:
      calculate the roots.
@@ -72,11 +72,12 @@ public class CalculateRootsService extends IntentService {
      */
   }
 
-  private void sendSuccessResults(Intent resultIntent, long root1, long root2, long timePass,
+  private void sendSuccessResults(Intent resultIntent, long root1, long root2,
                                   long numberToCalculateRootsFor){
     resultIntent.setAction("found_roots");
     resultIntent.putExtra("root1", root1);
     resultIntent.putExtra("root2", root2);
+    resultIntent.putExtra("original_number", numberToCalculateRootsFor);
     this.sendBroadcast(resultIntent);
   }
 

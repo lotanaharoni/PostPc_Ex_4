@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
   private BroadcastReceiver broadcastReceiverForSuccess = null;
+  private BroadcastReceiver broadcastReceiverForFail = null;
   // TODO: add any other fields to the activity as you want
 
 
@@ -41,8 +43,16 @@ public class MainActivity extends AppCompatActivity {
       public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
       public void onTextChanged(CharSequence s, int start, int before, int count) { }
       public void afterTextChanged(Editable s) {
+        long userInputLong = 0;
+        String userInputString = editTextUserInput.getText().toString();
         // text did change
         String newText = editTextUserInput.getText().toString();
+        try {
+          userInputLong = Long.parseLong(userInputString);
+          buttonCalculateRoots.setEnabled(true);
+        } catch(NumberFormatException e){
+          buttonCalculateRoots.setEnabled(false);
+        }
         // todo: check conditions to decide if button should be enabled/disabled (see spec below)
       }
     });
@@ -51,10 +61,15 @@ public class MainActivity extends AppCompatActivity {
     buttonCalculateRoots.setOnClickListener(v -> {
       Intent intentToOpenService = new Intent(MainActivity.this, CalculateRootsService.class);
       String userInputString = editTextUserInput.getText().toString();
+      long userInputLong = 0;
+
       // todo: check that `userInputString` is a number. handle bad input. convert `userInputString` to long
-      long userInputLong = 0; // todo this should be the converted string from the user
+       // todo this should be the converted string from the user
       intentToOpenService.putExtra("number_for_service", userInputLong);
       startService(intentToOpenService);
+      buttonCalculateRoots.setEnabled(false);
+      editTextUserInput.setEnabled(false);
+
       // todo: set views states according to the spec (below)
     });
 
@@ -86,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    // todo: remove ALL broadcast receivers we registered earlier in onCreate().
-    //  to remove a registered receiver, call method `this.unregisterReceiver(<receiver-to-remove>)`
+    this.unregisterReceiver(broadcastReceiverForSuccess);
+    this.unregisterReceiver(broadcastReceiverForFail);
   }
 
   @Override

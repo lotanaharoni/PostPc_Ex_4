@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         long root1 = incomingIntent.getLongExtra("root1", 0);
         long root2 = incomingIntent.getLongExtra("root2", 0);
         long originalNumber = incomingIntent.getLongExtra("original_number", 0);
-        Intent successIntent = new Intent();
+        Intent successIntent = new Intent(MainActivity.this, RootsResults.class);
         successIntent.putExtra("root1", root1);
         successIntent.putExtra("root2", root2);
         successIntent.putExtra("originalNumber", originalNumber);
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         if (incomingIntent == null || !incomingIntent.getAction().equals("stopped_calculations")) return;
         long originalNumber = incomingIntent.getLongExtra("original_number", 0);
         long timeUntilGiveUpSecond = incomingIntent.getLongExtra("time_until_give_up_second", 0);
-        Intent failIntent = new Intent();
+        Intent failIntent = new Intent(MainActivity.this, RootsResults.class);
         failIntent.putExtra("originalNumber", originalNumber);
         failIntent.putExtra("timeUntilGiveUpSecond", timeUntilGiveUpSecond);
         startActivity(failIntent);

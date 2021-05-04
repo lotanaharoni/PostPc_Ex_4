@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
     buttonCalculateRoots.setOnClickListener(v -> {
       Intent intentToOpenService = new Intent(MainActivity.this, CalculateRootsService.class);
       String userInputString = editTextUserInput.getText().toString();
-      long userInputLong = 0;
-      userInputLong = Long.parseLong(userInputString);
+      //long userInputLong = 0;
+      long userInputLong = Long.parseLong(userInputString);
 
 
       // todo: check that `userInputString` is a number. handle bad input. convert `userInputString` to long
@@ -92,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         successIntent.putExtra("root2", root2);
         successIntent.putExtra("originalNumber", originalNumber);
         startActivity(successIntent);
+
+        editTextUserInput.setText("");
+
         // success finding roots!
         /*
          TODO: handle "roots-found" as defined in the spec (below).
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
       }
     };
     registerReceiver(broadcastReceiverForSuccess, new IntentFilter("found_roots"));
-    Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+   // Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
 
 
     // register a broadcast-receiver to handle action "found_roots"
@@ -129,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
       }
     };
     registerReceiver(broadcastReceiverForFail, new IntentFilter("stopped_calculations"));
-    Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
+   // Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
 
     /*
     todo:

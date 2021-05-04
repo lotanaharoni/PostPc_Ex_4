@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         Intent successIntent = new Intent(MainActivity.this, RootsResults.class);
         successIntent.putExtra("root1", root1);
         successIntent.putExtra("root2", root2);
-        successIntent.putExtra("originalNumber", originalNumber);
+        successIntent.putExtra("original_number", originalNumber);
         startActivity(successIntent);
 
         editTextUserInput.setText("");

@@ -3,6 +3,7 @@ package exercise.find.roots;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
+import java.lang.Math;
 
 public class CalculateRootsService extends IntentService {
 
@@ -19,6 +20,18 @@ public class CalculateRootsService extends IntentService {
     if (numberToCalculateRootsFor <= 0) {
       Log.e("CalculateRootsService", "can't calculate roots for non-positive input" + numberToCalculateRootsFor);
       return;
+    }
+    Intent resultIntent = new Intent();
+
+    long root1 = 1;
+    long root2 = 1;
+    double sqrtNumber = Math.sqrt(numberToCalculateRootsFor);
+    for (long i = 2; i <sqrtNumber; i ++){
+      if (numberToCalculateRootsFor % i == 0){
+        root1 = i;
+        root2 = numberToCalculateRootsFor / i;
+        break;
+      }
     }
     /*
     TODO:
@@ -41,5 +54,16 @@ public class CalculateRootsService extends IntentService {
        for input "829851628752296034247307144300617649465159", after 20 seconds give up
 
      */
+  }
+
+  private void sendSuccessResults(Intent resultIntent, long root1, long root2, long timePass,
+                                  long numberToCalculateRootsFor){
+    resultIntent.setAction("found_roots");
+    resultIntent.putExtra("root1", root1);
+    resultIntent.putExtra("root2", root2);
+    this.sendBroadcast(resultIntent);
+  }
+
+  private void sendFailResults(Intent resultIntent,long timePass, long numberToCalculateRootsFor){
   }
 }

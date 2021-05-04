@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 import java.lang.Math;
+import java.util.concurrent.TimeUnit;
 
 public class CalculateRootsService extends IntentService {
 
@@ -22,17 +23,32 @@ public class CalculateRootsService extends IntentService {
       return;
     }
     Intent resultIntent = new Intent();
+    if (numberToCalculateRootsFor == 1){
+      sendSuccessResults(resultIntent, 1, 1, timeStartMs, 1);
+      return;
+    }
 
     long root1 = 1;
     long root2 = 1;
+    long timePassed = 0;
     double sqrtNumber = Math.sqrt(numberToCalculateRootsFor);
     for (long i = 2; i <sqrtNumber; i ++){
+      timePassed = System.currentTimeMillis() - timeStartMs;
       if (numberToCalculateRootsFor % i == 0){
-        root1 = i;
-        root2 = numberToCalculateRootsFor / i;
-        break;
+        if (TimeUnit.MILLISECONDS.toSeconds(timePassed) <= 20) {
+          root1 = i;
+          root2 = numberToCalculateRootsFor / i;
+          sendSuccessResults(resultIntent, root1, root2, timePassed, numberToCalculateRootsFor);
+          return;
+        }
+      }
+      if (TimeUnit.MILLISECONDS.toSeconds(timePassed) > 20){
+        sendFailResults(resultIntent,timePassed, numberToCalculateRootsFor);
+        return;
       }
     }
+    timePassed = System.currentTimeMillis() - timeStartMs;
+    sendSuccessResults(resultIntent, numberToCalculateRootsFor, 1, timePassed, numberToCalculateRootsFor);
     /*
     TODO:
      calculate the roots.
@@ -65,5 +81,9 @@ public class CalculateRootsService extends IntentService {
   }
 
   private void sendFailResults(Intent resultIntent,long timePass, long numberToCalculateRootsFor){
+    resultIntent.setAction("stopped_calculations");
+    resultIntent.putExtra("original_number", numberToCalculateRootsFor);
+    resultIntent.putExtra("time_until_give_up_second", timePass);
+    this.sendBroadcast(resultIntent);
   }
 }

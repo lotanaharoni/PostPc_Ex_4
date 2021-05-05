@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
         } catch(NumberFormatException e){
           buttonCalculateRoots.setEnabled(false);
         }
-        // todo: check conditions to decide if button should be enabled/disabled (see spec below)
       }
     });
 
@@ -67,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
       //long userInputLong = 0;
       long userInputLong = Long.parseLong(userInputString);
 
+      //9181531581341931811
+
 
       // todo: check that `userInputString` is a number. handle bad input. convert `userInputString` to long
        // todo this should be the converted string from the user
@@ -75,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
       buttonCalculateRoots.setEnabled(false);
       editTextUserInput.setEnabled(false);
       progressBar.setVisibility(View.VISIBLE);
-
-      // todo: set views states according to the spec (below)
     });
 
     // register a broadcast-receiver to handle action "found_roots"
@@ -87,22 +86,18 @@ public class MainActivity extends AppCompatActivity {
         long root1 = incomingIntent.getLongExtra("root1", 0);
         long root2 = incomingIntent.getLongExtra("root2", 0);
         long originalNumber = incomingIntent.getLongExtra("original_number", 0);
+        long timePassed = incomingIntent.getLongExtra("time_to_calculate", 0);
         Intent successIntent = new Intent(MainActivity.this, RootsResults.class);
         successIntent.putExtra("root1", root1);
         successIntent.putExtra("root2", root2);
         successIntent.putExtra("original_number", originalNumber);
+        successIntent.putExtra("time_to_calculate", timePassed);
         startActivity(successIntent);
 
+        progressBar.setVisibility(View.GONE);
         editTextUserInput.setText("");
-
-        // success finding roots!
-        /*
-         TODO: handle "roots-found" as defined in the spec (below).
-          also:
-           - the service found roots and passed them to you in the `incomingIntent`. extract them.
-           - when creating an intent to open the new-activity, pass the roots as extras to the new-activity intent
-             (see for example how did we pass an extra when starting the calculation-service)
-         */
+        editTextUserInput.setEnabled(true);
+        buttonCalculateRoots.setEnabled(false);
       }
     };
     registerReceiver(broadcastReceiverForSuccess, new IntentFilter("found_roots"));
@@ -116,30 +111,16 @@ public class MainActivity extends AppCompatActivity {
         if (incomingIntent == null || !incomingIntent.getAction().equals("stopped_calculations")) return;
         long originalNumber = incomingIntent.getLongExtra("original_number", 0);
         long timeUntilGiveUpSecond = incomingIntent.getLongExtra("time_until_give_up_second", 0);
-        Intent failIntent = new Intent(MainActivity.this, RootsResults.class);
-        failIntent.putExtra("originalNumber", originalNumber);
-        failIntent.putExtra("timeUntilGiveUpSecond", timeUntilGiveUpSecond);
-        startActivity(failIntent);
+        String messageTimeItTooks = "calculation aborted after " + String.valueOf(timeUntilGiveUpSecond) + "seconds"; //todo
+        Toast.makeText(MainActivity.this, messageTimeItTooks, Toast.LENGTH_LONG).show(); //todo
 
-        // success finding roots!
-        /*
-         TODO: handle "roots-found" as defined in the spec (below).
-          also:
-           - the service found roots and passed them to you in the `incomingIntent`. extract them.
-           - when creating an intent to open the new-activity, pass the roots as extras to the new-activity intent
-             (see for example how did we pass an extra when starting the calculation-service)
-         */
+        progressBar.setVisibility(View.GONE);
+        editTextUserInput.setText("");
+        editTextUserInput.setEnabled(true);
+        buttonCalculateRoots.setEnabled(false);
       }
     };
     registerReceiver(broadcastReceiverForFail, new IntentFilter("stopped_calculations"));
-   // Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
-
-    /*
-    todo:
-     add a broadcast-receiver to listen for abort-calculating as defined in the spec (below)
-     to show a Toast, use this code:
-     `Toast.makeText(this, "text goes here", Toast.LENGTH_SHORT).show()`
-     */
   }
 
   @Override
@@ -168,38 +149,12 @@ public class MainActivity extends AppCompatActivity {
 TODO:
 the spec is:
 
-upon launch, Activity starts out "clean":
-* progress-bar is hidden
-* "input" edit-text has no input and it is enabled
-* "calculate roots" button is disabled
-
-the button behavior is:
-* when there is no valid-number as an input in the edit-text, button is disabled
-* when we triggered a calculation and still didn't get any result, button is disabled
-* otherwise (valid number && not calculating anything in the BG), button is enabled
-
-the edit-text behavior is:
-* when there is a calculation in the BG, edit-text is disabled (user can't input anything)
-* otherwise (not calculating anything in the BG), edit-text is enabled (user can tap to open the keyboard and add input)
-
-the progress behavior is:
+the progress behavior is: //todo: check
 * when there is a calculation in the BG, progress is showing
 * otherwise (not calculating anything in the BG), progress is hidden
 
 when "calculate roots" button is clicked:
-* change states for the progress, edit-text and button as needed, so user can't interact with the screen
-
-when calculation is complete successfully:
-* change states for the progress, edit-text and button as needed, so the screen can accept new input
-* open a new "success" screen showing the following data:
-  - the original input number
-  - 2 roots combining this number (e.g. if the input was 99 then you can show "99=9*11" or "99=3*33"
-  - calculation time in seconds
-
-when calculation is aborted as it took too much time:
-* change states for the progress, edit-text and button as needed, so the screen can accept new input
-* show a toast "calculation aborted after X seconds"
-
+* change states for the progress, edit-text and button as needed, so user can't interact with the screen //todo: progres?
 
 upon screen rotation (saveState && loadState) the new screen should show exactly the same state as the old screen. this means:
 * edit-text shows the same input

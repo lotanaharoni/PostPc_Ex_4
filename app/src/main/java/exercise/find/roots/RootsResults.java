@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,16 +18,14 @@ public class RootsResults extends AppCompatActivity {
 
         TextView firstRoot = findViewById(R.id.FirstRoot);
         TextView secondRoot = findViewById(R.id.SecondRoot);
-     //   TextView firstRootTitle = findViewById(R.id.FirstRootTitle);
-       // TextView secondRootTitle = findViewById(R.id.SecondRootTitle);
         TextView numberToCalculateRootsFor = findViewById(R.id.numberToCalculateRootsFor);
+        TextView timeToCalculate = findViewById(R.id.TimePassed);
 
         Intent intent = getIntent();
-
         firstRoot.setText(String.valueOf(intent.getLongExtra("root1", 0)));
         secondRoot.setText(String.valueOf(intent.getLongExtra("root2", 0)));
         String originalNumberText = "The roots for the number " + String.valueOf(intent.getLongExtra("original_number", 0)) + ":";
-        //firstRootTitle.setText("The first root:");
+        timeToCalculate.setText(String.valueOf(intent.getLongExtra("time_to_calculate", 0)));
         numberToCalculateRootsFor.setText(originalNumberText);
 
 

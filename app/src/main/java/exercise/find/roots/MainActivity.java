@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
       String userInputString = editTextUserInput.getText().toString();
       long userInputLong = Long.parseLong(userInputString);
 
-      //9181531581341931811
-
       intentToOpenService.putExtra("number_for_service", userInputLong);
       startService(intentToOpenService);
       buttonCalculateRoots.setEnabled(false);

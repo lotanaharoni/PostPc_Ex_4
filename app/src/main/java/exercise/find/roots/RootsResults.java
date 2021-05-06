@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RootsResults extends AppCompatActivity {
+public class RootsResults extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

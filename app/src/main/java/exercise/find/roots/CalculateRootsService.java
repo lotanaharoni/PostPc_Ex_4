@@ -31,7 +31,7 @@ public class CalculateRootsService extends IntentService {
     long root1 = 1;
     long root2 = 1;
     double sqrtNumber = Math.sqrt(numberToCalculateRootsFor);
-    for (long i = 2; i <sqrtNumber; i ++){
+    for (long i = 2; i <=sqrtNumber; i ++){
       long timePassed = System.currentTimeMillis() - timeStartMs;
       if (numberToCalculateRootsFor % i == 0){
         if (TimeUnit.MILLISECONDS.toSeconds(timePassed) <= 20) {

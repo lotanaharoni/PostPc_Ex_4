@@ -34,14 +34,14 @@ public class CalculateRootsService extends IntentService {
     for (long i = 2; i <sqrtNumber; i ++){
       long timePassed = System.currentTimeMillis() - timeStartMs;
       if (numberToCalculateRootsFor % i == 0){
-        if (TimeUnit.MILLISECONDS.toSeconds(timePassed) <= 500) { //todo
+        if (TimeUnit.MILLISECONDS.toSeconds(timePassed) <= 20) {
           root1 = i;
           root2 = numberToCalculateRootsFor / i;
           sendSuccessResults(resultIntent, root1, root2, numberToCalculateRootsFor, TimeUnit.MILLISECONDS.toSeconds(timePassed));
           return;
         }
       }
-      if (TimeUnit.MILLISECONDS.toSeconds(timePassed) > 500){ //todo
+      if (TimeUnit.MILLISECONDS.toSeconds(timePassed) > 20){
         sendFailResults(resultIntent,timePassed, numberToCalculateRootsFor);
         return;
       }
